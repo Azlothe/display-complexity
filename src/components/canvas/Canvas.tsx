@@ -6,6 +6,7 @@ import {
 } from "@p5-wrapper/react";
 import { Tool, RGB } from "../../data/types/CanvasTypes";
 import { Image } from "p5";
+import { condensePixelArray } from "@/scripts/PixelMapper";
 
 const DEFAULT_CENTER = { x: 0, y: 0 };
 const DEFAULT_TOOL: Tool = "Pan";
@@ -107,6 +108,7 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
     p5.frameRate(60);
     isP5Init = true;
     img.loadPixels();
+    console.log(condensePixelArray(img.pixels));
   };
 
   p5.windowResized = () => {
