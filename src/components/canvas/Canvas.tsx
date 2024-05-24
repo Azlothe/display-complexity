@@ -4,9 +4,16 @@ import {
   ReactP5Wrapper,
   SketchProps,
 } from "@p5-wrapper/react";
-import { Tool, RGB } from "../../data/types/CanvasTypes";
+import { Tool, RGB, ImageSrc, ImageFilter } from "../../data/types/CanvasTypes";
 import { Image } from "p5";
 import { condensePixelArray } from "@/scripts/PixelMapper";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import {
+  getImgFilter,
+  getImgSrc,
+  updateImgFilterChange,
+} from "@/redux/slices/canvasSlice";
+import { AppDispatch } from "@/redux/store";
 
 const DEFAULT_CENTER = { x: 0, y: 0 };
 const DEFAULT_TOOL: Tool = "Pan";
@@ -15,6 +22,10 @@ const BG_COLOR: RGB = {
   g: 255,
   b: 255,
 };
+
+let imgSrc: ImageSrc;
+let imgFilter: ImageFilter;
+let dispatch: AppDispatch;
 
 interface Props {
   tool: Tool;
@@ -47,6 +58,12 @@ function Canvas({ tool, center, updateCenter, updateZoom }: Props) {
   const handleMouseScroll = () => {
     setIsMouseScroll(!isMouseScroll);
   };
+
+  imgSrc = useAppSelector(getImgSrc);
+  imgFilter = useAppSelector(getImgFilter);
+  console.log(imgFilter);
+
+  dispatch = useAppDispatch();
 
   return (
     <>
@@ -88,8 +105,8 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
 
   let hasChanged = true;
 
-  const imgSrc: string =
-    "https://static.vecteezy.com/system/resources/previews/025/220/125/non_2x/picture-a-captivating-scene-of-a-tranquil-lake-at-sunset-ai-generative-photo.jpg";
+  let originalImg: Image;
+
   let img: Image;
 
   function handleImage(img: Image) {
@@ -98,7 +115,7 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
   }
 
   p5.preload = () => {
-    img = p5.loadImage(imgSrc);
+    originalImg = p5.loadImage(imgSrc.src);
   };
 
   // run once on mount
@@ -107,6 +124,8 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
     p5.background(BG_COLOR.r, BG_COLOR.g, BG_COLOR.b);
     p5.frameRate(60);
     isP5Init = true;
+
+    img = originalImg.get();
     img.loadPixels();
     console.log(condensePixelArray(img.pixels));
   };
@@ -118,6 +137,13 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
 
   // loops continuously
   p5.draw = () => {
+    if (imgFilter.change) {
+      dispatch(updateImgFilterChange(false));
+      img = originalImg.get();
+      
+      if (imgFilter.filter !== "none") img.filter(imgFilter.filter);
+    }
+
     if (!hasChanged) return;
 
     if (tool === "Pan") {
