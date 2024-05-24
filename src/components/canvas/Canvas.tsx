@@ -15,6 +15,7 @@ import {
   updateImgSrcChange,
 } from "@/redux/slices/canvasSlice";
 import { AppDispatch } from "@/redux/store";
+import { useToast } from "@/components/ui/use-toast";
 
 const DEFAULT_CENTER = { x: 0, y: 0 };
 const DEFAULT_TOOL: Tool = "Pan";
@@ -27,6 +28,8 @@ const BG_COLOR: RGB = {
 let imgSrc: ImageSrc;
 let imgFilter: ImageFilter;
 let dispatch: AppDispatch;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let toast: (props: any) => void;
 
 interface Props {
   tool: Tool;
@@ -64,6 +67,7 @@ function Canvas({ tool, center, updateCenter, updateZoom }: Props) {
   imgFilter = useAppSelector(getImgFilter);
 
   dispatch = useAppDispatch();
+  toast = useToast().toast;
 
   return (
     <>
@@ -118,13 +122,26 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
     if (!imgSrc.change) return;
     dispatch(updateImgSrcChange(false));
 
-    p5.loadImage(imgSrc.src, (loadedImage) => {
-      originalImg = loadedImage;
+    p5.loadImage(
+      imgSrc.src,
+      (loadedImage: Image) => {
+        originalImg = loadedImage;
 
-      img = loadedImage.get();
-      loadPixels(img);
-      drawImage(img);
-    });
+        img = loadedImage.get();
+        loadPixels(img);
+        drawImage(img);
+      },
+      (err: Event) => {
+        // TODO?? : use server-side script to proxy the image request? CORS restrictions seemingly do not apply to server-to-server requests.
+        toast({
+          variant: "destructive",
+          title: "Could not load image.",
+          description:
+            "Please try to upload as a file or choose a different image. (Reason: Cross-Origin Request Blocked).",
+        });
+        console.log(err);
+      }
+    );
   };
 
   const applyFilter = (imgFilter: ImageFilter) => {
