@@ -12,6 +12,7 @@ import {
   getImgFilter,
   getImgSrc,
   updateImgFilterChange,
+  updateImgSrcChange,
 } from "@/redux/slices/canvasSlice";
 import { AppDispatch } from "@/redux/store";
 
@@ -61,7 +62,6 @@ function Canvas({ tool, center, updateCenter, updateZoom }: Props) {
 
   imgSrc = useAppSelector(getImgSrc);
   imgFilter = useAppSelector(getImgFilter);
-  console.log(imgFilter);
 
   dispatch = useAppDispatch();
 
@@ -105,17 +105,47 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
 
   let hasChanged = true;
 
-  let originalImg: Image;
+  let originalImg: Image = p5.createImage(1, 1);
 
   let img: Image;
 
-  function handleImage(img: Image) {
-    console.log(img);
-    p5.image(img, center.x, center.y);
-  }
+  const loadPixels = (img: Image) => {
+    img.loadPixels();
+    console.log("condensed pixel array", condensePixelArray(img.pixels));
+  };
 
-  p5.preload = () => {
-    originalImg = p5.loadImage(imgSrc.src);
+  const loadImage = (imgSrc: ImageSrc) => {
+    if (!imgSrc.change) return;
+    dispatch(updateImgSrcChange(false));
+
+    p5.loadImage(imgSrc.src, (loadedImage) => {
+      originalImg = loadedImage;
+
+      img = loadedImage.get();
+      loadPixels(img);
+      drawImage(img);
+    });
+  };
+
+  const applyFilter = (imgFilter: ImageFilter) => {
+    if (!imgFilter.change) return;
+    dispatch(updateImgFilterChange(false));
+
+    img = originalImg.get();
+    if (imgFilter.filter !== "none") img.filter(imgFilter.filter);
+    loadPixels(img);
+  };
+
+  const drawImage = (img: Image) => {
+    if (tool === "Pan") {
+      p5.background(BG_COLOR.r, BG_COLOR.g, BG_COLOR.b);
+    }
+
+    // zoom and pan
+    p5.scale(scaleFactor);
+    p5.translate(center.x, center.y);
+
+    p5.image(img, center.x, center.y);
   };
 
   // run once on mount
@@ -125,9 +155,7 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
     p5.frameRate(60);
     isP5Init = true;
 
-    img = originalImg.get();
-    img.loadPixels();
-    console.log(condensePixelArray(img.pixels));
+    loadImage(imgSrc);
   };
 
   p5.windowResized = () => {
@@ -137,27 +165,17 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
 
   // loops continuously
   p5.draw = () => {
-    if (!hasChanged && !imgFilter.change) return;
+    if (!hasChanged && !imgFilter.change && !imgSrc.change) return;
 
     if (imgFilter.change) {
-      dispatch(updateImgFilterChange(false));
-      img = originalImg.get();
-
-      if (imgFilter.filter !== "none") img.filter(imgFilter.filter);
+      applyFilter(imgFilter);
     }
 
-    if (tool === "Pan") {
-      p5.background(BG_COLOR.r, BG_COLOR.g, BG_COLOR.b);
+    if (imgSrc.change) {
+      loadImage(imgSrc);
     }
 
-    // zoom
-    p5.scale(scaleFactor);
-
-    // panning
-    p5.translate(center.x, center.y);
-
-    console.log("ran");
-    handleImage(img);
+    drawImage(img);
 
     hasChanged = false;
   };
