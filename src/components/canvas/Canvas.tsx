@@ -137,14 +137,14 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
 
   // loops continuously
   p5.draw = () => {
+    if (!hasChanged && !imgFilter.change) return;
+
     if (imgFilter.change) {
       dispatch(updateImgFilterChange(false));
       img = originalImg.get();
-      
+
       if (imgFilter.filter !== "none") img.filter(imgFilter.filter);
     }
-
-    if (!hasChanged) return;
 
     if (tool === "Pan") {
       p5.background(BG_COLOR.r, BG_COLOR.g, BG_COLOR.b);
