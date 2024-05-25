@@ -3,6 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import { Tool } from "../../data/types/CanvasTypes";
 import { IoIosSave } from "react-icons/io";
 import UploadDialog from "../dialogs/upload/UploadDialog";
+import SaveImage from "../dialogs/save/SaveImage";
 
 interface Props {
   updateTool: (tool: Tool) => void;
@@ -86,23 +87,27 @@ function VerticalToolbar({ updateTool }: Props) {
           }
         />
 
-        <IconButton
-          aria-label="pan"
-          onClick={() => handleClick("Pan")}
-          sx={{
-            backgroundColor: "white",
-            border: "1px solid rgba(0, 0, 0, 0.2)",
-            boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.2)",
-            "&:hover": {
-              backgroundColor: "#f0f0f0",
-              transform: "scale(1.15)",
-              transition: "transform 0.3s ease",
-            },
-            margin: "4px",
-          }}
-        >
-          <IoIosSave className="h-[32px] w-[32px] text-black" />
-        </IconButton>
+        <SaveImage
+          triggerContent={
+            <IconButton
+              aria-label="pan"
+              onClick={() => handleClick("Pan")}
+              sx={{
+                backgroundColor: "white",
+                border: "1px solid rgba(0, 0, 0, 0.2)",
+                boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.2)",
+                "&:hover": {
+                  backgroundColor: "#f0f0f0",
+                  transform: "scale(1.15)",
+                  transition: "transform 0.3s ease",
+                },
+                margin: "4px",
+              }}
+            >
+              <IoIosSave className="h-[32px] w-[32px] text-black" />
+            </IconButton>
+          }
+        />
       </Toolbar>
     </>
   );
