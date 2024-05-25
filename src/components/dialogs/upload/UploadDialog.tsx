@@ -19,34 +19,40 @@ type TriggerProps = {
 };
 
 const UploadDialog = ({ triggerContent }: TriggerProps) => {
-  
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [url, setURL] = useState<string>("");
-  const [option, setOption] = useState<Option>();
+  const [option, setOption] = useState<Option | null>(null);
 
   const dispatch = useAppDispatch();
+  const reader = new FileReader();
 
-  const updateFile = (file : File) => {
+  const updateFile = (file: File) => {
     setUploadedFile(file);
-  }
+  };
 
-  const updateURL = (link : string) => {
+  const updateURL = (link: string) => {
     setURL(link);
-  }
+  };
 
-  const updateOption = (option : Option) => {
+  const updateOption = (option: Option) => {
     setOption(option);
-  }
-  
+  };
+
   const handleUpdate = () => {
     console.log(uploadedFile, url, option);
-    
+
     switch (option) {
       case Option.FILE:
+        reader.onload = () => {
+          dispatch(updateImgSrc(reader.result));
+        };
+
+        reader.readAsDataURL(uploadedFile!);
+
         break;
       case Option.URL:
         dispatch(updateImgSrc(url));
-        break;  
+        break;
     }
 
     setUploadedFile(null);
