@@ -33,7 +33,7 @@ const SaveImage = ({ triggerContent }: TriggerProps) => {
             You can copy the image address or download the image.
           </DialogDescription>
         </DialogHeader>
-          <span className="font-semibold">Image Address</span>
+        <span className="font-semibold">Image Address</span>
         <div className="flex flex-col w-full gap-3.5">
           <div className="flex items-center space-x-2">
             <div className="grid flex-1 gap-4">

@@ -6,7 +6,6 @@ import {
 } from "@p5-wrapper/react";
 import { Tool, RGB, ImageSrc, ImageFilter } from "../../data/types/CanvasTypes";
 import { Image } from "p5";
-import { condensePixelArray } from "@/scripts/PixelMapper";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   getImgFilter,
@@ -16,6 +15,7 @@ import {
 } from "@/redux/slices/canvasSlice";
 import { AppDispatch } from "@/redux/store";
 import { useToast } from "@/components/ui/use-toast";
+import { updateImage } from "@/redux/slices/pixelSlice";
 
 const DEFAULT_CENTER = { x: 0, y: 0 };
 const DEFAULT_TOOL: Tool = "Pan";
@@ -113,12 +113,12 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
 
   let img: Image;
 
-  const loadPixels = (img: Image) => {
+  const loadPixels = async (img: Image) => {
     img.loadPixels();
-    console.log("condensed pixel array", condensePixelArray(img.pixels));
+    dispatch(updateImage(img));
   };
 
-  const loadImage = (imgSrc: ImageSrc) => {
+  const loadImage = async (imgSrc: ImageSrc) => {
     if (!imgSrc.change) return;
     dispatch(updateImgSrcChange(false));
 
@@ -128,8 +128,7 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
         originalImg = loadedImage;
 
         img = loadedImage.get();
-        loadPixels(img);
-        drawImage(img);
+        Promise.all([loadPixels(img), drawImage(img)]);
       },
       (err: Event) => {
         // TODO?? : use server-side script to proxy the image request? CORS restrictions seemingly do not apply to server-to-server requests.
