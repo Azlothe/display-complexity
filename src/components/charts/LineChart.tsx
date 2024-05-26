@@ -15,30 +15,35 @@ const LineChart = ({ data, labels }: LineChartProps) => {
       const ctx = chartRef.current.getContext("2d");
       if (ctx) {
         if (chartInstance.current) {
-          chartInstance.current.destroy();
-        }
+          
+          chartInstance.current.data.labels = labels;
+          chartInstance.current.data.datasets[0].data = data;
+          chartInstance.current.update();
 
-        chartInstance.current = new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: labels,
-            datasets: [
-              {
-                label: "User",
-                data: data,
-                borderColor: "rgb(75, 192, 192)",
-                tension: 0.1,
-                fill: false,
-              },
-            ],
-          },
-        });
+        } else {
+          chartInstance.current = new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: labels,
+              datasets: [
+                {
+                  label: "User",
+                  data: data,
+                  borderColor: "rgb(75, 192, 192)",
+                  tension: 0.1,
+                  fill: false,
+                },
+              ],
+            },
+          });
+        }
       }
     }
 
     return () => {
       if (chartInstance.current) {
         chartInstance.current.destroy();
+        chartInstance.current = null;
       }
     };
   }, [data, labels]);

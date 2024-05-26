@@ -16,13 +16,15 @@ import {
 import { AppDispatch } from "@/redux/store";
 import { useToast } from "@/components/ui/use-toast";
 import { updateImage } from "@/redux/slices/pixelSlice";
+import { getCanvasBG } from "@/redux/slices/settingsSlice";
 
 const DEFAULT_CENTER = { x: 0, y: 0 };
 const DEFAULT_TOOL: Tool = "Pan";
-const BG_COLOR: RGB = {
+let BG_COLOR: RGB = {
   r: 255,
   g: 255,
   b: 255,
+  a: 255,
 };
 
 let imgSrc: ImageSrc;
@@ -65,6 +67,7 @@ function Canvas({ tool, center, updateCenter, updateZoom }: Props) {
 
   imgSrc = useAppSelector(getImgSrc);
   imgFilter = useAppSelector(getImgFilter);
+  BG_COLOR = useAppSelector(getCanvasBG);
 
   dispatch = useAppDispatch();
   toast = useToast().toast;
@@ -154,7 +157,7 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
 
   const drawImage = (img: Image) => {
     if (tool === "Pan") {
-      p5.background(BG_COLOR.r, BG_COLOR.g, BG_COLOR.b);
+      p5.background(BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, BG_COLOR.a ?? 255);
     }
 
     // zoom and pan
@@ -167,7 +170,7 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
   // run once on mount
   p5.setup = () => {
     p5.createCanvas(window.innerWidth, window.innerHeight, p5.WEBGL);
-    p5.background(BG_COLOR.r, BG_COLOR.g, BG_COLOR.b);
+    p5.background(BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, BG_COLOR.a ?? 255);
     p5.frameRate(60);
     isP5Init = true;
 
@@ -176,7 +179,7 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
 
   p5.windowResized = () => {
     p5.resizeCanvas(window.innerWidth, window.innerHeight);
-    p5.background(BG_COLOR.r, BG_COLOR.g, BG_COLOR.b);
+    p5.background(BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, BG_COLOR.a ?? 255);
   };
 
   // loops continuously
