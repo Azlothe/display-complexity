@@ -10,12 +10,9 @@ import { useEffect, useMemo, useState } from "react";
 const StaticAlgorithms = () => {
   const image = useAppSelector(getImage) as Image;
 
-  let pixelArr: Pixel[] = useMemo(() => [], []);
+  const pixelArr: Pixel[] = useMemo(() => image && image.pixels ? condensePixelArray(image.pixels) : [], [image]);
 
-  if (image && image.pixels) {
-    pixelArr = condensePixelArray(image.pixels);
-    console.log("from static algos", pixelArr);
-  }
+  console.log(pixelArr)
 
   const [convolutionCalc, setConvolutionCalc] = useState(-1);
 
