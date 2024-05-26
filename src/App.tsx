@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/resizable";
 import CanvasPage from "./pages/CanvasPage";
 import StaticAlgorithms from "./pages/StaticAlgorithms";
+import RLHF from "./pages/RLHF";
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={50}>
               <div className="flex h-full items-center justify-center p-6">
-                <span className="font-semibold">RLHF</span>
+                <RLHF />
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>

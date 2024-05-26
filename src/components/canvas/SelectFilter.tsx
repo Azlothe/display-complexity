@@ -14,6 +14,8 @@ const SelectFilter = () => {
   
   const dispatch = useAppDispatch();
 
+  // TODO: add number parameter option for posterize and blur
+
   return (
     <Select
     onValueChange={(e : FILTER_TYPE) => dispatch(updateImgFilter(e))}
@@ -28,8 +30,8 @@ const SelectFilter = () => {
           <SelectItem value="gray">Gray</SelectItem>
           <SelectItem value="threshold">Threshold</SelectItem>
           <SelectItem value="opaque">Opaque</SelectItem>
-          <SelectItem value="posterize">Posterize (with number)</SelectItem>
-          <SelectItem value="blur">Blur (with number)</SelectItem>
+          <SelectItem value="posterize">Posterize</SelectItem>
+          <SelectItem value="blur">Blur</SelectItem>
           <SelectItem value="erode">Erode</SelectItem>
           <SelectItem value="dilate">Dilate</SelectItem>
         </SelectGroup>

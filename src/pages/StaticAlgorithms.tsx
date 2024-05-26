@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Pixel } from "@/data/types/Pixels";
 import { useAppSelector } from "@/redux/hooks";
 import { getImage } from "@/redux/slices/pixelSlice";
-import { convolutionData } from "@/scripts/DataAnalyzer";
+import { convolutionData, imageSegmentationData, spectralData } from "@/scripts/DataAnalyzer";
 import { condensePixelArray } from "@/scripts/PixelMapper";
 import { Image } from "p5";
 import { useEffect, useMemo, useState } from "react";
@@ -15,9 +15,13 @@ const StaticAlgorithms = () => {
   console.log(pixelArr)
 
   const [convolutionCalc, setConvolutionCalc] = useState(-1);
+  const [imageSegmentCalc, setImageSegmentCalc] = useState(-1);
+  const [spectralCalc, setSpectralCalc] = useState(-1);
 
   useEffect(() => {
     setConvolutionCalc(convolutionData(pixelArr));
+    setImageSegmentCalc(imageSegmentationData(pixelArr));
+    setSpectralCalc(spectralData(pixelArr));
   }, [pixelArr]);
 
   return (
@@ -33,15 +37,19 @@ const StaticAlgorithms = () => {
           </Button>
         </div>
         <div className="flex flex-col gap-6 bg-slate-200 py-6 px-4 rounded-xl">
-          <h1 className="text-center text-gray-600">10</h1>
+          <h1 className="text-center text-gray-600">{`${(
+            imageSegmentCalc * 100
+          ).toPrecision(2)}%`}</h1>
           <Button variant="ghost" className="underline text-blue-600">
             Image Segmentation
           </Button>
         </div>
         <div className="flex flex-col gap-6 bg-slate-200 py-6 px-4 rounded-xl">
-          <h1 className="text-center text-gray-600">10</h1>
+          <h1 className="text-center text-gray-600">{`${(
+            spectralCalc * 100
+          ).toPrecision(2)}%`}</h1>
           <Button variant="ghost" className="underline text-blue-600">
-            Brightest
+            Spectral Analysis
           </Button>
         </div>
       </div>
