@@ -11,6 +11,7 @@ type InitialState = {
   imgFilter: ImageFilter;
   history: Partial<ImageHistory>[];
   currentIndex: number;
+  currentNew: boolean;
 };
 
 const initialState: InitialState = {
@@ -24,6 +25,7 @@ const initialState: InitialState = {
   },
   history: [],
   currentIndex: -1,
+  currentNew: true,
 };
 
 export const canvasSlice = createSlice({
@@ -59,12 +61,15 @@ export const canvasSlice = createSlice({
           state.history.some(
             (el) => el.image!.src === action.payload.image!.src
           )
-        )
+        ) {
+          state.currentNew = false;
           return;
+        }
 
         action.payload.image!.labels = [`Img ${state.history.length}`];
         state.history.push(action.payload);
         ++state.currentIndex;
+        state.currentNew = true;
       },
     },
     updateUserMeasure: {
@@ -98,8 +103,15 @@ export const canvasSlice = createSlice({
       state,
       action: PayloadAction<ImageComplexity>
     ) => {
-      state.history[state.currentIndex].complexity = action.payload;
-      console.log(state.history[state.currentIndex])
+      const currentImage = state.history[state.currentIndex];
+      console.log("current index", state.currentIndex)
+      console.log("passed in complexity", action.payload)
+      if (!currentImage) return;
+      
+      currentImage.complexity = action.payload;
+    },
+    setCurrentNew: (state, action: PayloadAction<boolean>) => {
+      state.currentNew = action.payload;
     },
   },
 
@@ -113,6 +125,7 @@ export const canvasSlice = createSlice({
     getCurrentImage: (state) => state.history[state.currentIndex],
     getCurrentIndex: (state) => state.currentIndex,
     getHistoryLength: (state) => state.history.length,
+    getCurrentNew: (state) => state.currentNew,
   },
 });
 
@@ -126,6 +139,7 @@ export const {
   updateCurrentIndex,
   setCurrentIndex,
   updateCurrentComplexityMeasure,
+  setCurrentNew,
 } = canvasSlice.actions;
 
 export const {
@@ -137,4 +151,5 @@ export const {
   getCurrentImage,
   getCurrentIndex,
   getHistoryLength,
+  getCurrentNew,
 } = canvasSlice.selectors;

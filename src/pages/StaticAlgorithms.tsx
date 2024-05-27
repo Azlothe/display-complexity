@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { ImageHistory } from "@/data/types/ComplexityMeasures";
 import { Pixel } from "@/data/types/Pixels";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
-  getCurrentImage,
+  getCurrentNew,
+  setCurrentNew,
   updateCurrentComplexityMeasure,
 } from "@/redux/slices/canvasSlice";
 import { getImage } from "@/redux/slices/pixelSlice";
@@ -14,12 +14,11 @@ import {
 } from "@/scripts/DataAnalyzer";
 import { condensePixelArray } from "@/scripts/PixelMapper";
 import { Image } from "p5";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const StaticAlgorithms = () => {
   const image = useAppSelector(getImage) as Image;
-  const currentImageInfo = useAppSelector(getCurrentImage);
-  const previousImageInfo = useRef<Partial<ImageHistory> | null>(null);
+  const currentNew = useAppSelector(getCurrentNew);
 
   const pixelArr: Pixel[] = useMemo(
     () => (image && image.pixels ? condensePixelArray(image.pixels) : []),
@@ -30,35 +29,26 @@ const StaticAlgorithms = () => {
   const [imageSegmentCalc, setImageSegmentCalc] = useState(-1);
   const [spectralCalc, setSpectralCalc] = useState(-1);
 
-
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    setConvolutionCalc(convolutionData(pixelArr));
-    setImageSegmentCalc(imageSegmentationData(pixelArr));
-    setSpectralCalc(spectralData(pixelArr));
+    const calcConvolutionData = convolutionData(pixelArr);
+    const calcSegmentData = imageSegmentationData(pixelArr);
+    const calcSpectralData = spectralData(pixelArr);
+    setConvolutionCalc(calcConvolutionData);
+    setImageSegmentCalc(calcSegmentData);
+    setSpectralCalc(calcSpectralData);
+    if (!currentNew) return;
+    dispatch(
+      updateCurrentComplexityMeasure({
+        convolution: calcConvolutionData,
+        segmentation: calcSegmentData,
+        spectral: calcSpectralData,
+      })
+    );
+    dispatch(setCurrentNew(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pixelArr]);
-
-  useEffect(() => {
-    if (!currentImageInfo) return;
-    if (
-      !currentImageInfo.complexity ||
-      !currentImageInfo.complexity.convolution ||
-      !currentImageInfo.complexity.segmentation ||
-      !currentImageInfo.complexity.spectral
-    ) {
-      // dispatch(
-      //   updateCurrentComplexityMeasure({
-      //     convolution: convolutionCalc,
-      //     segmentation: imageSegmentCalc,
-      //     spectral: spectralCalc,
-      //   })
-      // );
-    }
-    previousImageInfo.current = currentImageInfo;
-    console.log("Ran", currentImageInfo);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentImageInfo]);
 
   return (
     <div className="w-full">
