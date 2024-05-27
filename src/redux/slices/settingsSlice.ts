@@ -1,3 +1,4 @@
+import ColorConstants from "@/data/constants/ColorConstants";
 import { RGB } from "@/data/types/CanvasTypes";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
@@ -13,14 +14,9 @@ type InitialState = {
 const initialState: InitialState = {
   toggleAI: false,
   auto: true,
-  canvasBG: {
-    r: 255,
-    g: 255,
-    b: 255,
-    a: 255,
-  },
-  topBG: localStorage.getItem("topBG") ?? "#ffffff",
-  bottomBG: localStorage.getItem("bottomBG") ?? "#ffffff",
+  canvasBG: ColorConstants.CANVAS_BG,
+  topBG: localStorage.getItem("topBG") ?? ColorConstants.DEFAULT_BG,
+  bottomBG: localStorage.getItem("bottomBG") ?? ColorConstants.DEFAULT_BG,
 };
 
 export const settingsSlice = createSlice({
@@ -45,9 +41,9 @@ export const settingsSlice = createSlice({
       localStorage.setItem("bottomBG", state.bottomBG);
     },
     resetAllBG: (state) => {
-      state.canvasBG = initialState.canvasBG;
-      state.topBG = initialState.topBG;
-      state.bottomBG = initialState.bottomBG;
+      state.canvasBG = ColorConstants.CANVAS_BG;
+      state.topBG = ColorConstants.DEFAULT_BG;
+      state.bottomBG = ColorConstants.DEFAULT_BG;
 
       localStorage.removeItem("topBG");
       localStorage.removeItem("bottomBG");
