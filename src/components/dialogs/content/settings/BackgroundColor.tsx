@@ -9,12 +9,14 @@ import {
   getBottomBG,
   getCanvasBG,
   getTopBG,
+  resetAllBG,
   updateBottomBG,
   updateCanvasBG,
   updateTopBG,
 } from "@/redux/slices/settingsSlice";
 import { AppDispatch } from "@/redux/store";
 import { RGB } from "@/data/types/CanvasTypes";
+import { Button } from "@/components/ui/button";
 
 const BackgroundColor = () => {
   const dispatch: AppDispatch = useAppDispatch();
@@ -23,8 +25,7 @@ const BackgroundColor = () => {
   const topBG: string = useAppSelector(getTopBG);
   const bottomBG: string = useAppSelector(getBottomBG);
   return (
-    <>
-      <h4>Background Color</h4>
+    <div className="flex flex-col gap-4">
       <Popover>
         <PopoverTrigger>
           <span className="flex flex-row gap-4 h-full">
@@ -87,7 +88,8 @@ const BackgroundColor = () => {
           />
         </PopoverContent>
       </Popover>
-    </>
+          <Button variant="secondary" className="w-fit" onClick={() => dispatch(resetAllBG())}>Reset to default</Button>
+    </div>
   );
 };
 

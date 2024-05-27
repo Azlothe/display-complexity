@@ -19,8 +19,8 @@ const initialState: InitialState = {
     b: 255,
     a: 255,
   },
-  topBG: "#ffffff",
-  bottomBG: "#ffffff",
+  topBG: localStorage.getItem("topBG") ?? "#ffffff",
+  bottomBG: localStorage.getItem("bottomBG") ?? "#ffffff",
 };
 
 export const settingsSlice = createSlice({
@@ -38,9 +38,19 @@ export const settingsSlice = createSlice({
     },
     updateTopBG: (state, action: PayloadAction<string>) => {
       state.topBG = action.payload;
+      localStorage.setItem("topBG", state.topBG);
     },
     updateBottomBG: (state, action: PayloadAction<string>) => {
       state.bottomBG = action.payload;
+      localStorage.setItem("bottomBG", state.bottomBG);
+    },
+    resetAllBG: (state) => {
+      state.canvasBG = initialState.canvasBG;
+      state.topBG = initialState.topBG;
+      state.bottomBG = initialState.bottomBG;
+
+      localStorage.removeItem("topBG");
+      localStorage.removeItem("bottomBG");
     },
   },
 
@@ -59,6 +69,7 @@ export const {
   updateCanvasBG,
   updateTopBG,
   updateBottomBG,
+  resetAllBG,
 } = settingsSlice.actions;
 
 export const { getAIToggle, getAuto, getCanvasBG, getTopBG, getBottomBG } =

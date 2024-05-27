@@ -7,6 +7,12 @@ import {
 } from "@/components/ui/dialog";
 import { ReactNode } from "react";
 import BackgroundColor from "../content/settings/BackgroundColor";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 type TriggerProps = {
   triggerContent: ReactNode;
@@ -22,7 +28,16 @@ const SettingsDialog = ({ triggerContent }: TriggerProps) => {
             <h3>Settings</h3>
           </DialogTitle>
         </DialogHeader>
-        <BackgroundColor />
+        <Accordion type="single" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger>
+              <h4>Background Color</h4>
+            </AccordionTrigger>
+            <AccordionContent>
+              <BackgroundColor />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </DialogContent>
     </Dialog>
   );

@@ -21,7 +21,12 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { getCurrentIndex, getHistoryLength, getImagesSrc, setCurrentIndex } from "@/redux/slices/canvasSlice";
+import {
+  getCurrentIndex,
+  getHistoryLength,
+  getImagesSrc,
+  setCurrentIndex,
+} from "@/redux/slices/canvasSlice";
 
 type TriggerProps = {
   triggerContent: ReactNode;
@@ -30,8 +35,8 @@ type TriggerProps = {
 const ImageHistory = ({ triggerContent }: TriggerProps) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(useAppSelector(getCurrentIndex));
-  const [count, setCount] = useState(useAppSelector(getHistoryLength));
 
+  const count = useAppSelector(getHistoryLength);
   const images = useAppSelector(getImagesSrc);
 
   useEffect(() => {
@@ -39,7 +44,6 @@ const ImageHistory = ({ triggerContent }: TriggerProps) => {
       return;
     }
 
-    setCount(api.scrollSnapList().length);
     setCurrent(api.selectedScrollSnap() + 1);
 
     api.on("select", () => {
