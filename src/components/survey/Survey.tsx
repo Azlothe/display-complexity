@@ -2,17 +2,25 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
 import MeasureConstants from "@/data/constants/MeasureConstants";
-import { useAppDispatch } from "@/redux/hooks";
-import { updateUserMeasure } from "@/redux/slices/historySlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import {
+  updateCurrentIndex,
+  updateUserMeasure,
+} from "@/redux/slices/canvasSlice";
+import { getAuto } from "@/redux/slices/settingsSlice";
 
 export default function Survey() {
-  const [userMeasure, setUserMeasure] = useState(MeasureConstants.DEFAULT_MEASURE);
+  const [userMeasure, setUserMeasure] = useState(
+    MeasureConstants.DEFAULT_MEASURE
+  );
 
   const dispatch = useAppDispatch();
+  const auto = useAppSelector(getAuto);
 
   const handleSave = () => {
     dispatch(updateUserMeasure(-1, userMeasure));
-  }
+    if (auto) dispatch(updateCurrentIndex(1));
+  };
 
   return (
     <>

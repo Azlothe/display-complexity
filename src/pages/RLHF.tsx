@@ -1,7 +1,7 @@
 import LineChart from "@/components/charts/LineChart";
 import Survey from "@/components/survey/Survey";
 import { useAppSelector } from "@/redux/hooks";
-import { getHistory } from "@/redux/slices/historySlice";
+import { getHistory } from "@/redux/slices/canvasSlice";
 
 const RLHF = () => {
   const history = useAppSelector(getHistory);

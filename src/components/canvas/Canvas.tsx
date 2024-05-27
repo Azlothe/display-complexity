@@ -8,6 +8,7 @@ import { Tool, RGB, ImageSrc, ImageFilter } from "../../data/types/CanvasTypes";
 import { Image } from "p5";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
+  addImage,
   getImgFilter,
   getImgSrc,
   updateImgFilterChange,
@@ -17,7 +18,6 @@ import { AppDispatch } from "@/redux/store";
 import { useToast } from "@/components/ui/use-toast";
 import { updateImage } from "@/redux/slices/pixelSlice";
 import { getCanvasBG } from "@/redux/slices/settingsSlice";
-import { addImage } from "@/redux/slices/historySlice";
 
 const DEFAULT_CENTER = { x: 0, y: 0 };
 const DEFAULT_TOOL: Tool = "Pan";

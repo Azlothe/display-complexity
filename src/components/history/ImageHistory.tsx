@@ -10,8 +10,7 @@ import {
 } from "@/components/ui/drawer";
 import { ReactNode, useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { useAppSelector } from "@/redux/hooks";
-import { getImagesSrc } from "@/redux/slices/historySlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -21,6 +20,8 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import { DialogClose } from "@radix-ui/react-dialog";
+import { getCurrentIndex, getHistoryLength, getImagesSrc, setCurrentIndex } from "@/redux/slices/canvasSlice";
 
 type TriggerProps = {
   triggerContent: ReactNode;
@@ -28,8 +29,8 @@ type TriggerProps = {
 
 const ImageHistory = ({ triggerContent }: TriggerProps) => {
   const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
+  const [current, setCurrent] = useState(useAppSelector(getCurrentIndex));
+  const [count, setCount] = useState(useAppSelector(getHistoryLength));
 
   const images = useAppSelector(getImagesSrc);
 
@@ -46,6 +47,8 @@ const ImageHistory = ({ triggerContent }: TriggerProps) => {
     });
   }, [api]);
 
+  const dispatch = useAppDispatch();
+
   return (
     <Drawer>
       <DrawerTrigger>{triggerContent}</DrawerTrigger>
@@ -53,7 +56,7 @@ const ImageHistory = ({ triggerContent }: TriggerProps) => {
         <DrawerHeader>
           <DrawerTitle>Image History</DrawerTitle>
           <DrawerDescription>
-            Click on an image to show it on the main page.
+            Click on an image to display it on the canvas.
           </DrawerDescription>
         </DrawerHeader>
         <div className="w-full flex flex-col justify-center items-center">
@@ -67,23 +70,29 @@ const ImageHistory = ({ triggerContent }: TriggerProps) => {
           >
             <CarouselContent className="w-full">
               {images.map((src, index) => (
-                <CarouselItem key={index} className="basis-1/5">
-                  <Card>
-                    <CardContent className="flex flex-col aspect-square items-center justify-center gap-4 p-4">
-                      <img src={src}></img>
-                      <span className="text-xl font-semibold">
-                        Image {index + 1}
-                      </span>
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
+                <DialogClose asChild>
+                  <CarouselItem
+                    key={index}
+                    className="basis-1/5 cursor-pointer"
+                    onClick={() => dispatch(setCurrentIndex(index))}
+                  >
+                    <Card>
+                      <CardContent className="flex flex-col aspect-square items-center justify-center gap-4 p-4">
+                        <img src={src}></img>
+                        <span className="text-xl font-semibold">
+                          {index + 1}
+                        </span>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                </DialogClose>
               ))}
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />
           </Carousel>
           <div className="py-2 text-center text-sm text-muted-foreground">
-            Slide {current} of {count}
+            Image {current} of {count}
           </div>
         </div>
         <DrawerFooter>
