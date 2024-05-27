@@ -26,13 +26,18 @@ export default function Survey() {
     <>
       <h3 className="text-center">Your Measure</h3>
       <h1 className="text-gray-600">{userMeasure}</h1>
-      <Slider
-        defaultValue={[userMeasure]}
-        onValueChange={(e) => setUserMeasure(e[0])}
-        min={MeasureConstants.MIN_MEASURE}
-        max={MeasureConstants.MAX_MEASURE}
-        step={MeasureConstants.STEP_MEASURE}
-      />
+      <div className="flex flex-row space-x-2 items-center justify-center w-52">
+        <span>{MeasureConstants.MIN_MEASURE}</span>
+
+        <Slider
+          defaultValue={[userMeasure]}
+          onValueChange={(e) => setUserMeasure(e[0])}
+          min={MeasureConstants.MIN_MEASURE}
+          max={MeasureConstants.MAX_MEASURE}
+          step={MeasureConstants.STEP_MEASURE}
+        />
+        <span>{MeasureConstants.MAX_MEASURE}</span>
+      </div>
       <Button className="w-full" variant="outline" onClick={handleSave}>
         Save
       </Button>

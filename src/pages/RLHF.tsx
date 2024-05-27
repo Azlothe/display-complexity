@@ -28,7 +28,7 @@ const RLHF = () => {
           <h2 className="text-center">Display Complexity History</h2>
           <LineChart data={userData} labels={labels} />
         </div>
-        <div className="bg-slate-200 px-8 py-6 rounded-xl flex flex-col items-center justify-between w-fit gap-6">
+        <div className="bg-slate-200 px-6 py-4 rounded-xl flex flex-col items-center justify-between w-fit gap-6">
           <Survey />
         </div>
       </div>

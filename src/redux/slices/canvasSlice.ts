@@ -1,5 +1,5 @@
 import { ImageFilter, ImageSrc } from "@/data/types/CanvasTypes";
-import { ImageHistory } from "@/data/types/ComplexityMeasures";
+import { ImageComplexity, ImageHistory } from "@/data/types/ComplexityMeasures";
 import { calcIndex } from "@/scripts/CalculateIndex";
 import { updateFilter, updateSrc } from "@/scripts/ImageUpdate";
 import { createSlice } from "@reduxjs/toolkit";
@@ -23,7 +23,7 @@ const initialState: InitialState = {
     change: true,
   },
   history: [],
-  currentIndex: 0,
+  currentIndex: -1,
 };
 
 export const canvasSlice = createSlice({
@@ -55,8 +55,16 @@ export const canvasSlice = createSlice({
       },
 
       reducer: (state, action: PayloadAction<Partial<ImageHistory>>) => {
+        if (
+          state.history.some(
+            (el) => el.image!.src === action.payload.image!.src
+          )
+        )
+          return;
+
         action.payload.image!.labels = [`Img ${state.history.length}`];
         state.history.push(action.payload);
+        ++state.currentIndex;
       },
     },
     updateUserMeasure: {
@@ -86,6 +94,13 @@ export const canvasSlice = createSlice({
       state.currentIndex = calcIndex(action.payload, state.history.length);
       updateSrc(state.imgSrc, state.history[state.currentIndex].image!.src);
     },
+    updateCurrentComplexityMeasure: (
+      state,
+      action: PayloadAction<ImageComplexity>
+    ) => {
+      state.history[state.currentIndex].complexity = action.payload;
+      console.log(state.history[state.currentIndex])
+    },
   },
 
   selectors: {
@@ -110,6 +125,7 @@ export const {
   updateUserMeasure,
   updateCurrentIndex,
   setCurrentIndex,
+  updateCurrentComplexityMeasure,
 } = canvasSlice.actions;
 
 export const {

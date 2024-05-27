@@ -33,9 +33,17 @@ const LineChart = ({ data, labels }: LineChartProps) => {
                   tension: 0.1,
                   fill: false,
                 },
+                {
+                  label: "Convolution",
+                  data: data.map(el => 100-el),
+                  borderColor: "rgb(255, 192, 192)",
+                  tension: 0.1,
+                  fill: false,
+                },
               ],
             },
-          });
+          },
+        );
         }
       }
     }
