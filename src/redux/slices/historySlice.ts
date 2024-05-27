@@ -61,9 +61,10 @@ export const historySlice = createSlice({
     getHistory: (state) => state.history,
     getImageHistory: (state, index: number) =>
       state.history[calcIndex(index, state.history.length)],
+    getImagesSrc: (state) => state.history.map(el => el.image!.src),
   },
 });
 
 export const { addImage, updateUserMeasure } = historySlice.actions;
 
-export const { getHistory, getImageHistory } = historySlice.selectors;
+export const { getHistory, getImageHistory, getImagesSrc } = historySlice.selectors;

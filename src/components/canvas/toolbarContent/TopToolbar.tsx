@@ -1,3 +1,4 @@
+import ImageHistory from "@/components/history/ImageHistory";
 import { Button } from "../../ui/button";
 import SelectFilter from ".././SelectFilter";
 
@@ -25,9 +26,13 @@ const TopToolbar = ({ center, zoom }: Props) => {
       </b>
 
       <SelectFilter />
-      <Button className="-mr-2" variant="secondary">
-        History
-      </Button>
+      <ImageHistory
+        triggerContent={
+          <Button className="-mr-2" variant="secondary">
+            History
+          </Button>
+        }
+      />
     </>
   );
 };
