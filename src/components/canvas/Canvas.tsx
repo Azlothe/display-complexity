@@ -17,6 +17,7 @@ import { AppDispatch } from "@/redux/store";
 import { useToast } from "@/components/ui/use-toast";
 import { updateImage } from "@/redux/slices/pixelSlice";
 import { getCanvasBG } from "@/redux/slices/settingsSlice";
+import { addImage } from "@/redux/slices/historySlice";
 
 const DEFAULT_CENTER = { x: 0, y: 0 };
 const DEFAULT_TOOL: Tool = "Pan";
@@ -131,7 +132,11 @@ function sketch(p5: P5CanvasInstance<CustomCanvasProps>) {
         originalImg = loadedImage;
 
         img = loadedImage.get();
-        Promise.all([loadPixels(img), drawImage(img)]);
+        Promise.all([
+          loadPixels(img),
+          drawImage(img),
+          dispatch(addImage(imgSrc.src)),
+        ]);
       },
       (err: Event) => {
         // TODO?? : use server-side script to proxy the image request? CORS restrictions seemingly do not apply to server-to-server requests.
